@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+        .a{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img{
+          border-radius: 10px;  
+        }
+    </style>
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body background="ss.png" style="background-repeat: no-repeat; background-attachment: fixed;background-size: cover; ">
+      <div class="a">
+    <div id="root"></div>    
+        </div>
+    
+  </body>
+  <script type="text/babel">
+    class FetchApi extends React.Component{
+        constructor(){
+            super();
+            this.state = {recipe:[], calories: [],title: [],image:[] };
+        }
+        APP_ID="791d77ba";
+        APP_KEY="2c4b7a4dcaa9a607ecdc3ef861e7d423";
+        componentDidMount(){
+            
+            fetch(`https://api.edamam.com/search?q=chicken&app_id=791d77ba&app_key=2c4b7a4dcaa9a607ecdc3ef861e7d423`) 
+            .then(results => {
+            return results.json();
+    }).then(data => {
+//        console.log(data.hits);
+        const calory=data.hits.map(cal => (
+            cal.recipe.calories
+        ));
+        const head=data.hits.map(hd => (
+            hd.recipe.label
+        ));
+        const image=data.hits.map(img => (
+            img.recipe.image
+        ));
+        const recipe=data.hits.map(reci => (
+            reci.recipe
+        ));
+        this.setState({recipe: recipe});
+        this.setState({calories: calory});
+        this.setState({title: head});
+        this.setState({image: image});
+        console.log(this.state.recipe);
+        })
+        
+}
+        
+        render(){
+            return(
+              this.state.recipe.map( table =>
+                  ( <div>
+                <h1>{table.label}</h1>
+                <h3>Calories</h3> <p>{table.calories}</p>
+                <h3>Total Weight</h3> <p>{table.totalWeight}</p>
+                <h3>Health Labels</h3> {table.healthLabels.map(nut => (<ul><li>{nut}</li></ul>))}
+                <img  src= {table.image} /><br /><br /><br /><br /><br /><br /><br /><br /><br />  
+                </div>))
+            );
+        };
+    }
+
+    ReactDOM.render(
+        <FetchApi /> , document.getElementById('root')
+    );
+  </script>
+</html>
